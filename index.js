@@ -15,7 +15,7 @@ var corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(cors({ origin: ['http://localhost:4000', 'http://localhost:3000'] }));
+app.use(cors({ origin: 'https://wnfashion-express.onrender.com/' }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

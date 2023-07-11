@@ -7,6 +7,7 @@ var cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
 const User = require('./models/user');
 
 var corsOptions = {
@@ -18,6 +19,11 @@ app.use(cors({ origin: ['http://localhost:4000', 'http://localhost:3000'] }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Connect to DB
+let userName = process.env.DB_USERNAME;
+let password = process.env.DB_PASSWORD;
+let connectionString = `mongodb+srv://${userName}:${password}@cluster0.t7cyadi.mongodb.net/?retryWrites=true&w=majority`;
+
 // PASSPORT
 // Configure session middleware
 app.use(cookieParser());
@@ -26,9 +32,9 @@ app.use(
     secret: process.env.PASSPORT_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: connectionString })
   })
 );
-
 // Initialize Passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -85,10 +91,7 @@ app.use('/api/products', productRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/orders', orderRouter);
 
-// Connect to DB
-let userName = process.env.DB_USERNAME;
-let password = process.env.DB_PASSWORD;
-let connectionString = `mongodb+srv://${userName}:${password}@cluster0.t7cyadi.mongodb.net/?retryWrites=true&w=majority`;
+
 
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {

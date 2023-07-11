@@ -7,12 +7,11 @@ var cookieParser = require('cookie-parser');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const session = require('express-session');
-const User = require('./models/user')
+const User = require('./models/user');
 
 var corsOptions = {
   origin: process.env.clientURL
 };
-
 
 app.use(cors(corsOptions));
 app.use(cors({ origin: ['http://localhost:4000', 'http://localhost:3000'] }));
@@ -71,39 +70,35 @@ passport.deserializeUser((id, done) => {
     });
 });
 
-const categoryRouter = require('./routes/categories')
-const productRouter = require('./routes/products')
-var usersRouter = require('./routes/users')
-var orderRouter = require('./routes/orders')
+const categoryRouter = require('./routes/categories');
+const productRouter = require('./routes/products');
+const usersRouter = require('./routes/users');
+const orderRouter = require('./routes/orders');
 
-app.get("/", (req,res) => {
-  res.send("hello first request")
-})
+app.get("/", (req, res) => {
+  res.send("Hello first request");
+});
 
-
-//Setup Router
+// Setup Router
 app.use('/api/categories', categoryRouter);
 app.use('/api/products', productRouter);
-app.use('/api/users', usersRouter)
+app.use('/api/users', usersRouter);
 app.use('/api/orders', orderRouter);
 
-//Connect to DB
+// Connect to DB
 let userName = process.env.DB_USERNAME;
 let password = process.env.DB_PASSWORD;
 let connectionString = `mongodb+srv://${userName}:${password}@cluster0.t7cyadi.mongodb.net/?retryWrites=true&w=majority`;
 
-
-
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then((message) => {
+  .then(() => {
     console.log('Connected successfully!');
   })
   .catch((error) => {
     console.log(`Error while connecting! ${error}`);
 });
 
-
-// set port, listen for requests
+// Set port, listen for requests
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
